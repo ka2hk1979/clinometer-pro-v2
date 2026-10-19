@@ -67,6 +67,17 @@ button{font:inherit;color:inherit;cursor:pointer}
 .demo label{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin:6px 0 2px}
 .demo label b{color:var(--orange)}
 input[type=range]{width:100%;accent-color:var(--orange)}
+.gmeter{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:12px;align-items:center;border:1px solid #303a46;border-radius:20px;background:linear-gradient(145deg,rgba(27,34,43,.97),rgba(10,13,18,.98));padding:12px 14px 12px 10px;margin-bottom:8px}
+.gmeter .label{grid-column:1/3}
+.gdial{width:100%;aspect-ratio:1;max-width:220px;margin:auto}
+.gdial svg{width:100%;height:100%;display:block}
+.gread{display:flex;flex-direction:column;gap:8px}
+.gread .gr{border:1px solid #2c3540;background:#11171e;border-radius:12px;padding:7px 10px}
+.gread .gk{display:flex;justify-content:space-between;font-size:10px;color:var(--muted);letter-spacing:.08em}
+.gread .gk em{font-style:normal;color:#cfd7de;font-weight:700;letter-spacing:0}
+.gread .gv{font-size:24px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1.15}
+.gread .gv small{font-size:13px;color:var(--orange);margin-left:2px}
+.gread .gr.total .gv{color:var(--orange)}
 .foot{text-align:center;font-size:11px;color:#6d7a88;margin:14px 0 2px;line-height:1.5}
 .toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom));transform:translate(-50%,20px);background:#1c2530;border:1px solid #3a4756;color:#fff;font-size:14px;padding:12px 16px;border-radius:14px;max-width:90vw;opacity:0;pointer-events:none;transition:.25s;z-index:20;text-align:center}
 .toast.show{opacity:1;transform:translate(-50%,0)}
@@ -110,6 +121,10 @@ input[type=range]{width:100%;accent-color:var(--orange)}
   .stat .v{font-size:18px;margin-top:2px}
   .speed .v{font-size:36px}
   .extras{grid-column:1/4;margin-top:8px}
+  .gmeter{grid-column:1/4;margin:8px 0 0;grid-template-columns:auto 1fr}
+  .gdial{width:150px}
+  .gread{flex-direction:row}
+  .gread .gr{flex:1}
   .dial{max-height:calc(100svh - 215px);width:auto;margin:0 auto}
   .angle{font-size:32px}
   .foot,.demo.on{display:none}
@@ -145,6 +160,15 @@ input[type=range]{width:100%;accent-color:var(--orange)}
     <div class="speed"><div class="k">VEHICLE SPEED</div><div class="v" id="speed">--</div><small id="speedUnit">km/h</small></div>
     <button class="stat" id="maxGBtn" aria-label="最大Gをリセット"><div class="k">MAX G</div><div class="v" id="gval">0.00 G</div></button>
   </section>
+  <section class="gmeter" id="gmeter">
+    <div class="label">LIVE G · いまかかっているG</div>
+    <div class="gdial"><svg id="gSvg" viewBox="0 0 200 200" role="img" aria-label="リアルタイムGメーター"></svg></div>
+    <div class="gread">
+      <div class="gr"><div class="gk">前後<em id="gLongTag">--</em></div><div class="gv" id="gLongVal">0.00<small>G</small></div></div>
+      <div class="gr"><div class="gk">左右<em id="gLatTag">--</em></div><div class="gv" id="gLatVal">0.00<small>G</small></div></div>
+      <div class="gr total"><div class="gk">合計</div><div class="gv" id="gTotVal">0.00<small>G</small></div></div>
+    </div>
+  </section>
   <section class="extras">
     <div class="pill"><span>GPS ACCURACY</span><b id="accuracy">-- m</b></div>
     <button class="pill" id="maxAngleBtn" aria-label="最大角をリセット"><span>MAX ANGLE</span><b id="maxAngle">0.0°</b></button>
@@ -177,7 +201,7 @@ input[type=range]{width:100%;accent-color:var(--orange)}
   <div class="row"><div>デモモード<small>センサー停止中に角度を手動操作</small></div><input type="checkbox" class="switch" id="demo"></div>
   <button class="ghost" id="clearCal">校正データを消去</button>
   <div class="actions2"><button id="close">閉じる</button><button class="primary" id="calibrate">いまの姿勢をゼロに設定</button></div>
-  <div class="ver">CLINOMETER PRO v2.0</div>
+  <div class="ver">CLINOMETER PRO v2.1</div>
 </div></div>
 <script>
 /* ===== Land Cruiser シリーズ車体データ(実寸 mm)と SVG ジェネレータ =====
@@ -534,6 +558,7 @@ let geoId = null, wakeLock = null, audioCtx = null;
 let speedKmh = null, gpsHeading = null, compassHeading = null, headingSrc = '';
 let lastAlert = 0, lastBeep = 0;
 let demoP = 0, demoR = 0;
+let gLong = 0, gLat = 0, agSign = 0, gTrail = [];   // 体が受けるG(慣性力): gLong 前へ押される+ / gLat 右へ押される+
 
 function rebuildFrame() {
   if (cal) { frame = frameFrom(cal.u, S.mount); tempCal = false; }
@@ -568,6 +593,48 @@ function makeGauge(type) {
 }
 function remake() { makeGauge('pitch'); makeGauge('roll'); lastKey = ''; }
 
+/* ---------- リアルタイムGメーター(レースゲーム風) ---------- */
+const GC = 100, GR = 84, GMAX = 1.0;   // 外周 = 1.0G
+function makeGMeter() {
+  let rings = '';
+  for (const g of [0.25, 0.5, 0.75, 1.0]) {
+    const major = g === 0.5 || g === 1.0;
+    rings += `<circle cx="${GC}" cy="${GC}" r="${GR * g / GMAX}" fill="none" stroke="${major ? '#3d4855' : '#26303b'}" stroke-width="${major ? 1.2 : .8}"${major ? '' : ' stroke-dasharray="2 3"'}/>`;
+    if (major) rings += `<text x="${GC + 3}" y="${GC - GR * g / GMAX + 9}" fill="#6d7a88" font-size="8">${g.toFixed(1)}G</text>`;
+  }
+  const lbl = (x, y, t, t2) => `<text x="${x}" y="${y}" fill="#e88925" font-size="10" font-weight="700" text-anchor="middle">${t}${t2 ? `<tspan x="${x}" dy="10" font-size="8">${t2}</tspan>` : ''}</text>`;
+  $('gSvg').innerHTML = `<defs><radialGradient id="gbg"><stop stop-color="#1c2631"/><stop offset="1" stop-color="#0b0f14"/></radialGradient></defs>
+  <circle cx="${GC}" cy="${GC}" r="${GR + 10}" fill="url(#gbg)" stroke="#35414d" stroke-width="1.5"/>
+  <line x1="${GC - GR}" y1="${GC}" x2="${GC + GR}" y2="${GC}" stroke="#26303b" stroke-width=".8"/>
+  <line x1="${GC}" y1="${GC - GR}" x2="${GC}" y2="${GC + GR}" stroke="#26303b" stroke-width=".8"/>${rings}
+  ${lbl(GC, 12, '減速')}${lbl(GC, 196, '加速')}${lbl(10, GC - 2, '右', '旋回')}${lbl(190, GC - 2, '左', '旋回')}
+  <polyline id="gTrailLine" points="" fill="none" stroke="#e88925" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity=".35"/>
+  <line id="gVec" x1="${GC}" y1="${GC}" x2="${GC}" y2="${GC}" stroke="#e88925" stroke-width="1.5" opacity=".6"/>
+  <circle id="gBall" cx="${GC}" cy="${GC}" r="7" fill="#e88925" stroke="#fff" stroke-width="1.5"/>`;
+}
+const gPos = (lat, lon) => {   // 体が押される向きに玉が動く: 右へ押される→右 / 前へ押される(ブレーキ)→上
+  let x = lat / GMAX * GR, y = -lon / GMAX * GR; const l = Math.hypot(x, y);
+  if (l > GR) { x *= GR / l; y *= GR / l; }
+  return [GC + x, GC + y];
+};
+let gLastText = 0;
+function renderGMeter(now) {
+  const lat = active ? gLat : 0, lon = active ? gLong : 0, tot = Math.hypot(lat, lon);
+  const [bx, by] = gPos(lat, lon), ball = $('gBall');
+  ball.setAttribute('cx', bx.toFixed(1)); ball.setAttribute('cy', by.toFixed(1));
+  ball.setAttribute('fill', tot >= 0.7 ? '#e5483c' : tot >= 0.4 ? '#f0b429' : '#e88925');
+  $('gVec').setAttribute('x2', bx.toFixed(1)); $('gVec').setAttribute('y2', by.toFixed(1));
+  gTrail.push([bx, by, now]);
+  while (gTrail.length && now - gTrail[0][2] > 1500) gTrail.shift();
+  $('gTrailLine').setAttribute('points', gTrail.map(p => p[0].toFixed(1) + ',' + p[1].toFixed(1)).join(' '));
+  if (now - gLastText < 100) return;    // 数字は1秒10回まで(読みやすさ優先)
+  gLastText = now;
+  const v = x => Math.abs(x).toFixed(2) + '<small>G</small>';
+  $('gLongVal').innerHTML = v(lon); $('gLatVal').innerHTML = v(lat); $('gTotVal').innerHTML = v(tot);
+  $('gLongTag').textContent = !active ? '--' : lon > 0.05 ? '減速' : lon < -0.05 ? '加速' : '—';
+  $('gLatTag').textContent = !active ? '--' : lat > 0.05 ? '左カーブ' : lat < -0.05 ? '右カーブ' : '—';
+}
+
 let lastKey = '', dispP = 0, dispR = 0;
 const fmt = v => { const r = Math.round(Math.abs(v) * 10) / 10; return r.toFixed(1); };
 
@@ -595,6 +662,7 @@ function render() {
     $('maxAngle').textContent = maxAngle.toFixed(1) + '°';
   }
   $('gval').textContent = maxG.toFixed(2) + ' G';
+  renderGMeter(performance.now());
   alertTick(tot);
   requestAnimationFrame(render);
 }
@@ -653,6 +721,20 @@ function onMotion(e) {
   if (m == null) return;
   gSm = gSm * 0.6 + m * 0.4; motionCount++;
   if (motionCount > 40) maxG = Math.max(maxG, gSm / G0);
+  updateLiveG(a, ag);
+}
+/* 加速度を車体の前後・左右に分解する。端末によって符号が逆の場合があるため、静止時の重力の向きで自動判定 */
+function updateLiveG(a, ag) {
+  if (!frame || !uSm) return;
+  const hasAg = ag && ag.x != null, hasA = a && a.x != null;
+  if (hasAg && !agSign) { const d = dot([ag.x, ag.y, ag.z], uSm); if (Math.abs(d) > G0 * 0.6) agSign = d > 0 ? 1 : -1; }
+  const sg = agSign || 1;
+  let lin;
+  if (hasA) lin = mul([a.x, a.y, a.z], sg);                                    // OSが重力を除いた値(推奨)
+  else if (hasAg && agSign) lin = sub(mul([ag.x, ag.y, ag.z], sg), mul(uSm, G0)); // 重力込みの値から傾きぶんを差し引く
+  else return;
+  const lon = -dot(lin, frame.f) / G0, lat = -dot(lin, frame.r) / G0;          // 車の加速度と逆向き = 体が受ける力
+  gLong += (lon - gLong) * 0.15; gLat += (lat - gLat) * 0.15;                 // 細かい振動をならす
 }
 let movedWarned = false;
 function warnMoved() {
@@ -671,7 +753,7 @@ async function startSensors() {
   window.addEventListener('deviceorientation', onOri);
   window.addEventListener('devicemotion', onMotion);
   if (!IS_IOS) window.addEventListener('deviceorientationabsolute', onOriAbs);
-  active = true; uSm = null; frame = null; oriCount = 0; motionCount = 0; gotOri = false; movedWarned = false; gSm = 0;
+  active = true; uSm = null; frame = null; oriCount = 0; motionCount = 0; gotOri = false; movedWarned = false; gSm = 0; gLong = gLat = 0; agSign = 0; gTrail = [];
   try { audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)(); if (audioCtx.state === 'suspended') audioCtx.resume(); } catch (_) {}
   lockScreen(); startGPS(); updateButtons();
   setTimeout(() => { if (active && !gotOri) toast('センサーの値が届きません。スマホ/タブレットのSafari・Chromeで開いてください', 4500); }, 2500);
@@ -787,10 +869,10 @@ $('maxGBtn').onclick = () => { maxG = 0; toast('最大Gをリセットしまし�
 $('maxAngleBtn').onclick = () => { maxAngle = 0; lastKey = ''; toast('最大角をリセットしました'); };
 
 /* ---------- 起動 ---------- */
-applySettingsToUI(); applyModel(); updateButtons();
+applySettingsToUI(); applyModel(); makeGMeter(); updateButtons();
 requestAnimationFrame(render);
 if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) navigator.serviceWorker.register('sw.js').catch(() => {});
-window.__lc = { S, get state() { return { pitch, roll, active, cal, frame } }, onOri, calibrate, setFrame: rebuildFrame };
+window.__lc = { S, get state() { return { pitch, roll, active, cal, frame, gLong, gLat } }, onOri, onMotion, calibrate, setFrame: rebuildFrame };
 
 </script>
 </body>
