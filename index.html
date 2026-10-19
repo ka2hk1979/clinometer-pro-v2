@@ -186,6 +186,7 @@ input[type=range]{width:100%;accent-color:var(--orange)}
   <h3>車両</h3>
   <div class="field"><label for="carModel">ランドクルーザーシリーズ</label><select id="carModel">
     <option value="40">40系(FJ40V)</option><option value="60">60系(FJ60V)</option><option value="70">70系(GDJ76W)</option><option value="80">80系(FZJ80G)</option><option value="100">100系(UZJ100W)</option><option value="200">200系(URJ202W)</option><option value="300">300系(FJA300W)</option></select></div>
+  <div class="row"><div>実写の写真で表示<small>自分の車(70系)の写真。オフでイラスト表示</small></div><input type="checkbox" class="switch" id="photo"></div>
   <div class="field"><label for="carColor">車体カラー</label><select id="carColor">
     <option value="#d7d1b8">サンドベージュ</option><option value="#f2f2ed">ホワイト</option><option value="#b9bec2">シルバー</option><option value="#202a2b">ダークグレー</option><option value="#243c2c">ダークグリーン</option><option value="#1f3b5c">ネイビー</option><option value="#151719">ブラック</option><option value="#8d3027">レッド</option></select></div>
   <h3>計測</h3>
@@ -203,7 +204,7 @@ input[type=range]{width:100%;accent-color:var(--orange)}
   <button class="ghost" id="clearCal">校正データを消去</button>
   <div class="actions2"><button id="close">閉じる</button><button class="primary" id="calibrate">いまの姿勢をゼロに設定</button></div>
   <p class="note">停車中に設置し、水平な場所で「ゼロ設定」を押してください。走行中は画面を操作しないでください。</p>
-  <div class="ver">CLINOMETER PRO v2.2</div>
+  <div class="ver">CLINOMETER PRO v2.3</div>
 </div></div>
 <script>
 /* ===== Land Cruiser シリーズ車体データ(実寸 mm)と SVG ジェネレータ =====
@@ -519,7 +520,7 @@ const CX = 120, CY = 112;
 const IS_IOS = /iP(hone|ad|od)/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 
 /* ---------- 設定の保存 ---------- */
-const DEF = { model: '70', color: '#d7d1b8', unit: 'kmh', mount: 'auto', warnRoll: 25, warnPitch: 30, sound: true, vibrate: true, hideCoords: false, demo: false };
+const DEF = { model: '70', color: '#d7d1b8', unit: 'kmh', mount: 'auto', warnRoll: 25, warnPitch: 30, sound: true, vibrate: true, hideCoords: false, demo: false, photo: true };
 const store = {
   get(k, d) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (_) { return d; } },
   set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (_) {} },
@@ -570,7 +571,7 @@ function rebuildFrame() {
 
 /* ---------- メーター描画 ---------- */
 function makeGauge(type) {
-  const svg = $(type + 'Svg'), car = type === 'pitch' ? carSideSVG(S.model, S.color, SIDE_S) : carFrontSVG(S.model, S.color, FRONT_S);
+  const svg = $(type + 'Svg'), car = S.photo ? carPhotoSVG(type) : type === 'pitch' ? carSideSVG(S.model, S.color, SIDE_S) : carFrontSVG(S.model, S.color, FRONT_S);
   let ticks = '';
   for (let a = -45; a <= 45; a += 5) {
     const major = a % 15 === 0, r = (a - 90) * D2R, ri = 84, ro = major ? 98 : 91;
@@ -594,6 +595,17 @@ function makeGauge(type) {
   <circle cx="${CX}" cy="${CY}" r="3.5" fill="#e88925" stroke="#fff" stroke-width="1"/>`;
 }
 function remake() { makeGauge('pitch'); makeGauge('roll'); lastKey = ''; }
+
+/* 実写の写真(自分の車)。寸法は写真の実寸(mm)、cx は車体の中心が画像のどこか(左端0〜右端1)。画像の下端 = タイヤの接地面 */
+const PHOTO = {
+  pitch: { src: 'car-side.webp', wmm: 4771, hmm: 1956, cx: 435 / 900, s: SIDE_S },
+  roll: { src: 'car-front.webp', wmm: 2070, hmm: 1960, cx: 0.5, s: FRONT_S }
+};
+function carPhotoSVG(type) {
+  const p = PHOTO[type], w = p.wmm * p.s, h = p.hmm * p.s, gy = 900 * p.s;
+  return `<ellipse cx="0" cy="${(gy + 1).toFixed(1)}" rx="${(w * 0.48).toFixed(1)}" ry="3.2" fill="#000" opacity=".45"/>` +
+    `<image href="${p.src}" x="${(-p.cx * w).toFixed(1)}" y="${(gy - h).toFixed(1)}" width="${w.toFixed(1)}" height="${h.toFixed(1)}" preserveAspectRatio="none"/>`;
+}
 
 /* ---------- リアルタイムGメーター(レースゲーム風) ---------- */
 const GC = 100, GR = 84, GMAX = 1.0;   // 外周 = 1.0G
@@ -844,7 +856,7 @@ function applyModel() {
 function applySettingsToUI() {
   $('carModel').value = S.model; $('carColor').value = S.color; $('units').value = S.unit; $('mount').value = S.mount;
   $('warnRoll').value = S.warnRoll; $('warnPitch').value = S.warnPitch;
-  ['sound', 'vibrate', 'hideCoords', 'demo'].forEach(k => $(k).checked = !!S[k]);
+  ['sound', 'vibrate', 'hideCoords', 'demo', 'photo'].forEach(k => $(k).checked = !!S[k]);
   $('demoBox').classList.toggle('on', S.demo); updateSpeed(); updateChip();
 }
 const openM = () => $('modal').classList.add('open'), closeM = () => $('modal').classList.remove('open');
@@ -852,6 +864,7 @@ $('settings').onclick = openM; $('close').onclick = closeM;
 $('modal').addEventListener('click', e => { if (e.target === $('modal')) closeM(); });
 $('carModel').onchange = e => { S.model = e.target.value; saveS(); applyModel(); };
 $('carColor').onchange = e => { S.color = e.target.value; saveS(); remake(); };
+$('photo').onchange = e => { S.photo = e.target.checked; saveS(); remake(); };
 $('units').onchange = e => { S.unit = e.target.value; saveS(); updateSpeed(); };
 $('mount').onchange = e => { S.mount = e.target.value; saveS(); rebuildFrame(); toast('設置方向を変えたら「ゼロ設定」をやり直してください'); };
 $('warnRoll').onchange = e => { S.warnRoll = +e.target.value; saveS(); lastKey = ''; };
