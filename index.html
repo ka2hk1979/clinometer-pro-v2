@@ -16,69 +16,70 @@
 :root{--bg:#090c10;--panel:#11161d;--line:#303946;--orange:#e88925;--muted:#93a0ae;--white:#f4f6f8;--green:#27b36a;--red:#e5483c;--amber:#f0b429}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html{-webkit-text-size-adjust:100%}
-body{background:var(--bg);color:var(--white);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP","Segoe UI",sans-serif;min-height:100svh;letter-spacing:.02em;overscroll-behavior:none}
-.app{width:min(100%,520px);min-height:100svh;margin:auto;padding:calc(8px + env(safe-area-inset-top)) 14px calc(16px + env(safe-area-inset-bottom));background:radial-gradient(ellipse at 50% 18%,#1a222b 0,#0b0f14 58%,#080a0d 100%);position:relative}
-.top{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:4px 2px 8px}
-.brand{font-size:11px;letter-spacing:.2em;color:#aab4bf;line-height:1.2;white-space:nowrap}
-.brand b{display:block;font-size:21px;color:#fff;letter-spacing:.1em;margin-top:2px}
+body{background:var(--bg);color:var(--white);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP","Segoe UI",sans-serif;height:100svh;overflow:hidden;letter-spacing:.02em;overscroll-behavior:none}
+/* 縦画面: 画面1枚に収まるよう、メーター部分が残りの高さに合わせて伸び縮みする */
+.app{width:min(100%,520px);height:100svh;margin:auto;padding:calc(6px + env(safe-area-inset-top)) 12px calc(8px + env(safe-area-inset-bottom));background:radial-gradient(ellipse at 50% 18%,#1a222b 0,#0b0f14 58%,#080a0d 100%);position:relative;display:grid;gap:8px;grid-template-columns:minmax(0,1fr);grid-template-rows:auto auto minmax(0,1.3fr) auto minmax(0,1fr) auto;grid-template-areas:"top" "status" "gauges" "side" "gmeter" "demo"}
+.top{grid-area:top;display:flex;align-items:center;gap:6px;min-width:0}
+.brand{font-size:8.5px;letter-spacing:.18em;color:#aab4bf;line-height:1.15;white-space:nowrap;margin-right:auto}
+.brand b{display:block;font-size:15px;color:#fff;letter-spacing:.07em;margin-top:1px}
 .brand b span{color:var(--orange)}
 button{font:inherit;color:inherit;cursor:pointer}
-.iconbtn{width:46px;height:46px;border:1px solid #39424e;background:#151b23;border-radius:50%;font-size:20px;display:grid;place-items:center;flex:none}
-.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:6px}
-.btn{height:50px;border-radius:14px;border:1px solid #39424e;background:#151b23;font-weight:800;font-size:15px;letter-spacing:.06em;white-space:nowrap}
+.iconbtn{width:36px;height:36px;border:1px solid #39424e;background:#151b23;border-radius:50%;font-size:17px;display:grid;place-items:center;flex:none}
+.actions{display:flex;gap:6px;flex:none}
+.btn{height:36px;padding:0 11px;border-radius:11px;border:1px solid #39424e;background:#151b23;font-weight:800;font-size:12.5px;letter-spacing:.04em;white-space:nowrap}
 .btn.zero{border-color:#c87926;background:linear-gradient(180deg,#b86a1d,#7c3f0b);color:#fff;box-shadow:0 0 14px #e8892522}
 .btn.start{border-color:#28734d;background:#123b2a}
 .btn.start.on{background:#12643b;border-color:#2fbf78;box-shadow:0 0 14px #27b36a33}
 .btn:active,.iconbtn:active{transform:scale(.97)}
-.location{font-size:12px;color:var(--muted);text-align:center;padding:8px 0 10px;border-bottom:1px solid #242c36;min-height:34px}
-.compassline{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:8px;color:#b7c0c9;font-size:12px;margin:10px 0 12px}
-.compass{min-width:34px;height:34px;padding:0 6px;border:1px solid #596574;border-radius:17px;display:grid;place-items:center;color:var(--orange);font-size:12px;font-weight:800;background:#111820}
+.status{grid-area:status;display:flex;flex-direction:column;align-items:center;gap:3px;min-width:0;padding-bottom:6px;border-bottom:1px solid #242c36}
+.compassline{display:flex;align-items:center;justify-content:center;gap:7px;color:#b7c0c9;font-size:12px;white-space:nowrap}
+.compass{min-width:30px;height:24px;padding:0 6px;border:1px solid #596574;border-radius:12px;display:grid;place-items:center;color:var(--orange);font-size:11px;font-weight:800;background:#111820}
 .sep{color:#3e4955}
-.chip{font-size:11px;font-weight:700;border-radius:10px;padding:3px 9px;border:1px solid #3b4551;color:var(--muted)}
+.chip{font-size:10.5px;font-weight:700;border-radius:10px;padding:2px 8px;border:1px solid #3b4551;color:var(--muted)}
 .chip.ok{color:#5ad394;border-color:#2a7a52;background:#0f2a1e}
 .chip.warn{color:#f6b25a;border-color:#8a5a1e;background:#2b1c0a}
-.gauges{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.gauge{border:1px solid #303a46;border-radius:20px;background:linear-gradient(145deg,rgba(27,34,43,.97),rgba(10,13,18,.98));padding:12px 6px 10px;min-width:0;box-shadow:inset 0 1px rgba(255,255,255,.03);transition:border-color .2s,box-shadow .2s}
+.location{font-size:10.5px;color:var(--muted);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.gauges{grid-area:gauges;display:grid;grid-template-columns:1fr 1fr;gap:8px;min-height:0}
+.gauge{border:1px solid #303a46;border-radius:18px;background:linear-gradient(145deg,rgba(27,34,43,.97),rgba(10,13,18,.98));padding:8px 6px;min-width:0;min-height:0;display:flex;flex-direction:column;box-shadow:inset 0 1px rgba(255,255,255,.03);transition:border-color .2s,box-shadow .2s}
 .gauge.warn{border-color:var(--amber);box-shadow:0 0 18px #f0b42955}
 .gauge.danger{border-color:var(--red);box-shadow:0 0 22px #e5483c88;animation:pulse .7s infinite alternate}
 @keyframes pulse{to{box-shadow:0 0 6px #e5483c44}}
-.label{font-size:11px;font-weight:800;letter-spacing:.14em;text-align:center;color:var(--orange);line-height:1.3}
-.dial{width:100%;aspect-ratio:240/230;margin:2px auto 0}
+.label{font-size:10px;font-weight:800;letter-spacing:.12em;text-align:center;color:var(--orange);line-height:1.3}
+.dial{flex:1 1 0;min-height:50px;width:100%;margin:2px auto 0}
 .dial svg{width:100%;height:100%;display:block}
-.angle{font-size:40px;line-height:1;font-weight:800;text-align:center;font-variant-numeric:tabular-nums;margin-top:-2px}
-.angle small{font-size:17px;color:var(--orange);margin-left:2px}
+.angle{font-size:clamp(26px,4.4svh,38px);line-height:1;font-weight:800;text-align:center;font-variant-numeric:tabular-nums}
+.angle small{font-size:.45em;color:var(--orange);margin-left:2px}
 .gauge.warn .angle{color:var(--amber)}
 .gauge.danger .angle{color:var(--red)}
-.tag{font-size:13px;font-weight:700;text-align:center;margin-top:6px;color:#cfd7de;min-height:18px}
-.sub{font-size:10px;color:var(--muted);text-align:center;margin-top:3px;letter-spacing:.08em}
-.bottom{display:grid;grid-template-columns:1fr 1.45fr 1fr;align-items:center;gap:8px;margin:16px 0}
-.stat{border:1px solid #303946;background:#121820;border-radius:14px;text-align:center;padding:12px 4px;width:100%;color:inherit}
-.stat .k{font-size:11px;color:var(--muted);letter-spacing:.08em}
-.stat .v{font-size:22px;font-weight:800;color:var(--orange);margin-top:5px;font-variant-numeric:tabular-nums;white-space:nowrap}
-.speed{aspect-ratio:1;border-radius:50%;border:2px solid var(--orange);background:radial-gradient(circle,#202833,#0c1015 72%);display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 0 18px #e8892517,inset 0 0 15px #e8892510}
-.speed .k{font-size:11px;color:var(--muted);letter-spacing:.07em}
-.speed .v{font-size:46px;font-weight:850;line-height:1.05;font-variant-numeric:tabular-nums}
-.speed small{font-size:13px;color:var(--orange)}
-.extras{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.pill{border:1px solid #2c3540;background:#11171e;border-radius:12px;padding:11px 12px;display:flex;justify-content:space-between;align-items:center;font-size:11px;color:var(--muted);text-align:left;width:100%}
-.pill b{font-size:17px;color:#fff;font-variant-numeric:tabular-nums}
-.demo{display:none;margin-top:12px;border:1px solid #2d3743;border-radius:14px;padding:12px;background:#10151b}
+.tag{font-size:12px;font-weight:700;text-align:center;margin-top:4px;color:#cfd7de;min-height:16px;white-space:nowrap}
+.sub{font-size:9.5px;color:var(--muted);text-align:center;margin-top:2px;letter-spacing:.08em;white-space:nowrap}
+.side{grid-area:side;display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);grid-template-areas:"alt speed maxg" "acc speed maxa";gap:6px 8px}
+.s-alt{grid-area:alt}.s-maxg{grid-area:maxg}.s-acc{grid-area:acc}.s-maxa{grid-area:maxa}
+.stat{border:1px solid #303946;background:#121820;border-radius:12px;text-align:center;padding:5px 4px;width:100%;color:inherit;display:flex;flex-direction:column;justify-content:center;min-width:0}
+.stat .k{font-size:9.5px;color:var(--muted);letter-spacing:.08em;white-space:nowrap}
+.stat .v{font-size:19px;font-weight:800;color:var(--orange);margin-top:2px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.stat.plain .v{color:#fff}
+.speed{grid-area:speed;width:clamp(92px,12.5svh,116px);aspect-ratio:1;align-self:center;border-radius:50%;border:2px solid var(--orange);background:radial-gradient(circle,#202833,#0c1015 72%);display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 0 18px #e8892517,inset 0 0 15px #e8892510}
+.speed .k{font-size:8px;color:var(--muted);letter-spacing:.06em}
+.speed .v{font-size:clamp(30px,4.8svh,40px);font-weight:850;line-height:1.05;font-variant-numeric:tabular-nums}
+.speed small{font-size:11px;color:var(--orange)}
+.gmeter{grid-area:gmeter;display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);grid-template-rows:auto minmax(0,1fr);gap:4px 12px;border:1px solid #303a46;border-radius:18px;background:linear-gradient(145deg,rgba(27,34,43,.97),rgba(10,13,18,.98));padding:8px 12px 10px 8px;min-height:0}
+.gmeter .label{grid-column:1/3}
+.gdial{min-height:0;height:100%;width:100%}
+.gdial svg{width:100%;height:100%;display:block}
+.gread{display:flex;flex-direction:column;justify-content:center;gap:6px;min-height:0;min-width:0}
+.gread .gr{border:1px solid #2c3540;background:#11171e;border-radius:11px;padding:5px 10px;min-width:0;min-height:0}
+.gread .gk{display:flex;justify-content:space-between;font-size:10px;color:var(--muted);letter-spacing:.08em;white-space:nowrap}
+.gread .gk em{font-style:normal;color:#cfd7de;font-weight:700;letter-spacing:0}
+.gread .gv{font-size:clamp(17px,2.8svh,24px);font-weight:800;font-variant-numeric:tabular-nums;line-height:1.15;white-space:nowrap}
+.gread .gv small{font-size:.55em;color:var(--orange);margin-left:2px}
+.gread .gr.total .gv{color:var(--orange)}
+.demo{grid-area:demo;display:none;border:1px solid #2d3743;border-radius:14px;padding:6px 12px 8px;background:#10151b}
 .demo.on{display:block}
-.demo label{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin:6px 0 2px}
+.demo label{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin:4px 0 0}
 .demo label b{color:var(--orange)}
 input[type=range]{width:100%;accent-color:var(--orange)}
-.gmeter{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:12px;align-items:center;border:1px solid #303a46;border-radius:20px;background:linear-gradient(145deg,rgba(27,34,43,.97),rgba(10,13,18,.98));padding:12px 14px 12px 10px;margin-bottom:8px}
-.gmeter .label{grid-column:1/3}
-.gdial{width:100%;aspect-ratio:1;max-width:220px;margin:auto}
-.gdial svg{width:100%;height:100%;display:block}
-.gread{display:flex;flex-direction:column;gap:8px}
-.gread .gr{border:1px solid #2c3540;background:#11171e;border-radius:12px;padding:7px 10px}
-.gread .gk{display:flex;justify-content:space-between;font-size:10px;color:var(--muted);letter-spacing:.08em}
-.gread .gk em{font-style:normal;color:#cfd7de;font-weight:700;letter-spacing:0}
-.gread .gv{font-size:24px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1.15}
-.gread .gv small{font-size:13px;color:var(--orange);margin-left:2px}
-.gread .gr.total .gv{color:var(--orange)}
-.foot{text-align:center;font-size:11px;color:#6d7a88;margin:14px 0 2px;line-height:1.5}
+.note{font-size:11px;color:#8693a1;line-height:1.5;margin-top:4px}
 .toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom));transform:translate(-50%,20px);background:#1c2530;border:1px solid #3a4756;color:#fff;font-size:14px;padding:12px 16px;border-radius:14px;max-width:90vw;opacity:0;pointer-events:none;transition:.25s;z-index:20;text-align:center}
 .toast.show{opacity:1;transform:translate(-50%,0)}
 .modal{display:none;position:fixed;inset:0;background:#000c;z-index:10;padding:16px;align-items:flex-end;justify-content:center}
@@ -102,32 +103,33 @@ input[type=range]{width:100%;accent-color:var(--orange)}
 .ver{text-align:center;font-size:10px;color:#5d6a77;margin-top:14px}
 .flash{position:fixed;inset:0;pointer-events:none;box-shadow:inset 0 0 0 0 #e5483c;z-index:5;transition:box-shadow .15s}
 .flash.on{box-shadow:inset 0 0 40px 10px #e5483ccc}
-@media(max-width:360px){.brand b{font-size:18px}.angle{font-size:34px}.speed .v{font-size:38px}}
-/* 横画面(車載ホルダー想定) */
+@media(max-height:760px){.sub{display:none}}
+/* 高さが足りないとき: Gの数字を1行(項目名 + 値)にまとめる */
+@media(orientation:portrait) and (max-height:640px){.gread{gap:4px}.gread .gr{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;column-gap:6px;padding:3px 8px}.gread .gk{gap:5px}.gread .gv{font-size:16px}}
+@media(max-width:360px){.brand{display:none}.btn{padding:0 9px}}
+/* 横画面(車載ホルダー想定): 左から ピッチ / ロール / Gメーター / 速度・数値 */
 @media(orientation:landscape) and (max-height:560px){
-  .app{width:100%;max-width:none;display:grid;grid-template-columns:1fr minmax(170px,24vw) 1fr;column-gap:10px;align-content:start;padding-left:calc(12px + env(safe-area-inset-left));padding-right:calc(12px + env(safe-area-inset-right))}
-  .top{grid-column:1/2;grid-row:1}
-  .top .iconbtn{width:40px;height:40px}
-  .actions{grid-column:2/4;grid-row:1;margin:0;align-self:center}
-  .btn{height:42px;font-size:14px}
-  .location{grid-column:1/4;padding:5px 0}
-  .compassline{grid-column:1/4;margin:4px 0 6px}
+  .app{width:100%;max-width:none;padding:calc(4px + env(safe-area-inset-top)) calc(10px + env(safe-area-inset-right)) calc(6px + env(safe-area-inset-bottom)) calc(10px + env(safe-area-inset-left));grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,.95fr) minmax(140px,.6fr);grid-template-rows:auto minmax(0,1fr);grid-template-areas:"top top status status" "pitch roll gmeter side";gap:6px 8px}
+  .status{justify-content:center;padding-bottom:0;border-bottom:0}
   .gauges{display:contents}
-  .gauge:nth-child(1){grid-column:1;grid-row:4}
-  .gauge:nth-child(2){grid-column:3;grid-row:4}
-  .bottom{grid-column:2;grid-row:4;display:flex;flex-direction:column;margin:0;gap:6px}
-  .bottom .speed{width:min(100%,150px)}
-  .stat{padding:6px 4px}
-  .stat .v{font-size:18px;margin-top:2px}
-  .speed .v{font-size:36px}
-  .extras{grid-column:1/4;margin-top:8px}
-  .gmeter{grid-column:1/4;margin:8px 0 0;grid-template-columns:auto 1fr}
-  .gdial{width:150px}
-  .gread{flex-direction:row}
-  .gread .gr{flex:1}
-  .dial{max-height:calc(100svh - 215px);width:auto;margin:0 auto}
-  .angle{font-size:32px}
-  .foot,.demo.on{display:none}
+  #pitchCard{grid-area:pitch}
+  #rollCard{grid-area:roll}
+  .sub{display:none}
+  .angle{font-size:clamp(24px,8svh,34px)}
+  .gmeter{grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(0,1fr) auto;padding:8px 10px}
+  .gmeter .label{grid-column:1}
+  .gread{gap:3px}
+  .gread .gr{display:flex;justify-content:space-between;align-items:baseline;padding:2px 8px;border-radius:8px}
+  .gread .gk{font-size:9.5px;letter-spacing:0}
+  .gread .gk em{display:none}
+  .gread .gv{font-size:14px}
+  .side{grid-template-columns:minmax(0,1fr);grid-template-rows:auto;grid-template-areas:"speed" "alt" "maxg" "acc" "maxa";align-content:space-between;gap:5px}
+  .speed{width:min(100%,clamp(80px,26svh,108px));justify-self:center}
+  .stat{flex-direction:row;justify-content:space-between;align-items:baseline;padding:5px 8px;gap:4px}
+  .stat .k{font-size:8px;letter-spacing:.03em}
+  .stat .v{font-size:15px;margin:0}
+  .demo.on{display:none}
+  .gmeter .jp{display:none}
 }
 
 </style>
@@ -141,27 +143,31 @@ input[type=range]{width:100%;accent-color:var(--orange)}
 <main class="app">
   <header class="top">
     <div class="brand">OFF-ROAD INSTRUMENT<b>LAND CRUISER <span id="seriesLabel">70</span></b></div>
+    <div class="actions">
+      <button class="btn zero" id="zeroBtn">⟲ ゼロ設定</button>
+      <button class="btn start" id="sensorBtn">▶ 計測開始</button>
+    </div>
     <button class="iconbtn" id="settings" aria-label="設定">⚙</button>
   </header>
-  <div class="actions">
-    <button class="btn zero" id="zeroBtn">⟲ ゼロ設定</button>
-    <button class="btn start" id="sensorBtn">▶ センサー開始</button>
-  </div>
-  <div class="location" id="location">GPS 停止中 · センサー開始で測位します</div>
-  <div class="compassline">
-    <div class="compass" id="compass">N</div><span id="heading">方位 --°</span><span class="sep">|</span><span id="vehicleLabel">GDJ76W</span><span class="chip warn" id="calChip">未校正</span>
+  <div class="status">
+    <div class="compassline">
+      <div class="compass" id="compass">N</div><span id="heading">方位 --°</span><span class="sep">|</span><span id="vehicleLabel">GDJ76W</span><span class="chip warn" id="calChip">未校正</span>
+    </div>
+    <div class="location" id="location">GPS 停止中 · 計測開始で測位します</div>
   </div>
   <section class="gauges">
     <article class="gauge" id="pitchCard"><div class="label">PITCH / UPHILL · DOWNHILL</div><div class="dial"><svg id="pitchSvg" viewBox="0 0 240 230" role="img" aria-label="ピッチ角メーター"></svg></div><div class="angle" id="pitchVal">0.0<small>°</small></div><div class="tag" id="pitchTag">水平</div><div class="sub">SIDE VIEW · FRONT ↔ REAR</div></article>
     <article class="gauge" id="rollCard"><div class="label">ROLL / LEFT · RIGHT</div><div class="dial"><svg id="rollSvg" viewBox="0 0 240 230" role="img" aria-label="ロール角メーター"></svg></div><div class="angle" id="rollVal">0.0<small>°</small></div><div class="tag" id="rollTag">水平</div><div class="sub">FRONT VIEW · SIDE ↔ SIDE</div></article>
   </section>
-  <section class="bottom">
-    <div class="stat"><div class="k">ALTITUDE</div><div class="v" id="alt">-- m</div></div>
+  <section class="side">
     <div class="speed"><div class="k">VEHICLE SPEED</div><div class="v" id="speed">--</div><small id="speedUnit">km/h</small></div>
-    <button class="stat" id="maxGBtn" aria-label="最大Gをリセット"><div class="k">MAX G</div><div class="v" id="gval">0.00 G</div></button>
+    <div class="stat s-alt"><div class="k">ALTITUDE</div><div class="v" id="alt">-- m</div></div>
+    <button class="stat s-maxg" id="maxGBtn" aria-label="最大Gをリセット"><div class="k">MAX G</div><div class="v" id="gval">0.00 G</div></button>
+    <div class="stat plain s-acc"><div class="k">GPS ACCURACY</div><div class="v" id="accuracy">-- m</div></div>
+    <button class="stat plain s-maxa" id="maxAngleBtn" aria-label="最大角をリセット"><div class="k">MAX ANGLE</div><div class="v" id="maxAngle">0.0°</div></button>
   </section>
   <section class="gmeter" id="gmeter">
-    <div class="label">LIVE G · いまかかっているG</div>
+    <div class="label">LIVE G<span class="jp"> · いまかかっているG</span></div>
     <div class="gdial"><svg id="gSvg" viewBox="0 0 200 200" role="img" aria-label="リアルタイムGメーター"></svg></div>
     <div class="gread">
       <div class="gr"><div class="gk">前後<em id="gLongTag">--</em></div><div class="gv" id="gLongVal">0.00<small>G</small></div></div>
@@ -169,15 +175,10 @@ input[type=range]{width:100%;accent-color:var(--orange)}
       <div class="gr total"><div class="gk">合計</div><div class="gv" id="gTotVal">0.00<small>G</small></div></div>
     </div>
   </section>
-  <section class="extras">
-    <div class="pill"><span>GPS ACCURACY</span><b id="accuracy">-- m</b></div>
-    <button class="pill" id="maxAngleBtn" aria-label="最大角をリセット"><span>MAX ANGLE</span><b id="maxAngle">0.0°</b></button>
-  </section>
   <section class="demo" id="demoBox">
     <label><span>デモ操作 / PITCH</span><b id="demoPLabel">0°</b></label><input id="demoP" type="range" min="-45" max="45" value="0" step="1">
     <label><span>デモ操作 / ROLL(+で右下がり)</span><b id="demoRLabel">0°</b></label><input id="demoR" type="range" min="-45" max="45" value="0" step="1">
   </section>
-  <div class="foot">停車中に設置し、水平な場所で「ゼロ設定」を押してください。<br>走行中は画面を操作しないでください。</div>
 </main>
 <div class="toast" id="toast"></div>
 <div class="modal" id="modal"><div class="sheet">
@@ -201,7 +202,8 @@ input[type=range]{width:100%;accent-color:var(--orange)}
   <div class="row"><div>デモモード<small>センサー停止中に角度を手動操作</small></div><input type="checkbox" class="switch" id="demo"></div>
   <button class="ghost" id="clearCal">校正データを消去</button>
   <div class="actions2"><button id="close">閉じる</button><button class="primary" id="calibrate">いまの姿勢をゼロに設定</button></div>
-  <div class="ver">CLINOMETER PRO v2.1</div>
+  <p class="note">停車中に設置し、水平な場所で「ゼロ設定」を押してください。走行中は画面を操作しないでください。</p>
+  <div class="ver">CLINOMETER PRO v2.2</div>
 </div></div>
 <script>
 /* ===== Land Cruiser シリーズ車体データ(実寸 mm)と SVG ジェネレータ =====
@@ -796,7 +798,7 @@ function startGPS() {
 }
 function stopGPS() {
   if (geoId != null) navigator.geolocation.clearWatch(geoId); geoId = null; gpsHeading = null; speedKmh = null;
-  $('location').textContent = 'GPS 停止中 · センサー開始で測位します'; $('accuracy').textContent = '-- m'; $('alt').textContent = '-- m'; $('speed').textContent = '--';
+  $('location').textContent = 'GPS 停止中 · 計測開始で測位します'; $('accuracy').textContent = '-- m'; $('alt').textContent = '-- m'; $('speed').textContent = '--';
 }
 function onPos(pos) {
   const c = pos.coords;
@@ -828,7 +830,7 @@ function updateHeading() {
 let toastT;
 function toast(msg, ms = 2600) { const t = $('toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('show'), ms); }
 function updateButtons() {
-  const b = $('sensorBtn'); b.textContent = active ? '■ 稼働中(停止)' : '▶ センサー開始'; b.classList.toggle('on', active); updateChip();
+  const b = $('sensorBtn'); b.textContent = active ? '■ 計測停止' : '▶ 計測開始'; b.classList.toggle('on', active); updateChip();
 }
 function updateChip() {
   const c = $('calChip');
