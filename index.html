@@ -18,52 +18,54 @@
 html{-webkit-text-size-adjust:100%}
 body{background:var(--bg);color:var(--white);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP","Segoe UI",sans-serif;height:100svh;overflow:hidden;letter-spacing:.02em;overscroll-behavior:none}
 /* 縦画面: 画面1枚に収まるよう、メーター部分が残りの高さに合わせて伸び縮みする */
-.app{width:min(100%,520px);height:100svh;margin:auto;padding:calc(6px + env(safe-area-inset-top)) 12px calc(8px + env(safe-area-inset-bottom));background:radial-gradient(ellipse at 50% 18%,#1a222b 0,#0b0f14 58%,#080a0d 100%);position:relative;display:grid;gap:8px;grid-template-columns:minmax(0,1fr);grid-template-rows:auto auto minmax(0,1.3fr) auto minmax(0,1fr) auto;grid-template-areas:"top" "status" "gauges" "side" "gmeter" "demo"}
+.app{width:min(100%,520px);height:100svh;margin:auto;padding:calc(4px + env(safe-area-inset-top)) 10px calc(6px + env(safe-area-inset-bottom));background:radial-gradient(ellipse at 50% 18%,#1a222b 0,#0b0f14 58%,#080a0d 100%);position:relative;display:grid;gap:6px;grid-template-columns:minmax(0,1fr);grid-template-rows:auto auto minmax(0,2.5fr) auto minmax(0,1fr) auto;grid-template-areas:"top" "status" "gauges" "side" "gmeter" "demo"}
 .top{grid-area:top;display:flex;align-items:center;gap:6px;min-width:0}
-.brand{font-size:8.5px;letter-spacing:.18em;color:#aab4bf;line-height:1.15;white-space:nowrap;margin-right:auto}
-.brand b{display:block;font-size:15px;color:#fff;letter-spacing:.07em;margin-top:1px}
+.brand{font-size:0;line-height:1;white-space:nowrap;margin-right:auto}
+.brand b{display:block;font-size:13px;color:#fff;letter-spacing:.06em}
 .brand b span{color:var(--orange)}
 button{font:inherit;color:inherit;cursor:pointer}
-.iconbtn{width:36px;height:36px;border:1px solid #39424e;background:#151b23;border-radius:50%;font-size:17px;display:grid;place-items:center;flex:none}
+.iconbtn{width:26px;height:26px;border:1px solid #39424e;background:#151b23;border-radius:50%;font-size:14px;display:grid;place-items:center;flex:none}
 .actions{display:flex;gap:6px;flex:none}
-.btn{height:36px;padding:0 11px;border-radius:11px;border:1px solid #39424e;background:#151b23;font-weight:800;font-size:12.5px;letter-spacing:.04em;white-space:nowrap}
+.btn{height:26px;padding:0 10px;border-radius:8px;border:1px solid #39424e;background:#151b23;font-weight:800;font-size:11.5px;letter-spacing:.04em;white-space:nowrap}
 .btn.zero{border-color:#c87926;background:linear-gradient(180deg,#b86a1d,#7c3f0b);color:#fff;box-shadow:0 0 14px #e8892522}
 .btn.start{border-color:#28734d;background:#123b2a}
 .btn.start.on{background:#12643b;border-color:#2fbf78;box-shadow:0 0 14px #27b36a33}
 .btn:active,.iconbtn:active{transform:scale(.97)}
-.status{grid-area:status;display:flex;flex-direction:column;align-items:center;gap:3px;min-width:0;padding-bottom:6px;border-bottom:1px solid #242c36}
-.compassline{display:flex;align-items:center;justify-content:center;gap:7px;color:#b7c0c9;font-size:12px;white-space:nowrap}
-.compass{min-width:30px;height:24px;padding:0 6px;border:1px solid #596574;border-radius:12px;display:grid;place-items:center;color:var(--orange);font-size:11px;font-weight:800;background:#111820}
+.status{grid-area:status;display:flex;align-items:center;gap:8px;min-width:0;padding-bottom:4px;border-bottom:1px solid #242c36}
+.compassline{display:flex;align-items:center;gap:6px;color:#b7c0c9;font-size:11px;white-space:nowrap;flex:none}
+.compassline .sep,#vehicleLabel{display:none}
+.compass{min-width:26px;height:18px;padding:0 5px;border:1px solid #596574;border-radius:9px;display:grid;place-items:center;color:var(--orange);font-size:11px;font-weight:800;background:#111820}
 .sep{color:#3e4955}
-.chip{font-size:10.5px;font-weight:700;border-radius:10px;padding:2px 8px;border:1px solid #3b4551;color:var(--muted)}
+.chip{font-size:10px;font-weight:700;border-radius:9px;padding:1px 7px;border:1px solid #3b4551;color:var(--muted)}
 .chip.ok{color:#5ad394;border-color:#2a7a52;background:#0f2a1e}
 .chip.warn{color:#f6b25a;border-color:#8a5a1e;background:#2b1c0a}
-.location{font-size:10.5px;color:var(--muted);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
-.gauges{grid-area:gauges;display:grid;grid-template-columns:1fr 1fr;gap:8px;min-height:0}
-.gauge{border:1px solid #303a46;border-radius:18px;background:linear-gradient(145deg,rgba(27,34,43,.97),rgba(10,13,18,.98));padding:8px 6px;min-width:0;min-height:0;display:flex;flex-direction:column;box-shadow:inset 0 1px rgba(255,255,255,.03);transition:border-color .2s,box-shadow .2s}
+.location{font-size:10px;color:var(--muted);text-align:right;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.gauges{grid-area:gauges;display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr) minmax(0,1fr);gap:6px;min-height:0}
+.gauge{border:1px solid #303a46;border-radius:18px;background:linear-gradient(145deg,rgba(27,34,43,.97),rgba(10,13,18,.98));padding:5px 8px 5px 6px;min-width:0;min-height:0;display:flex;align-items:center;gap:4px;box-shadow:inset 0 1px rgba(255,255,255,.03);transition:border-color .2s,box-shadow .2s}
 .gauge.warn{border-color:var(--amber);box-shadow:0 0 18px #f0b42955}
 .gauge.danger{border-color:var(--red);box-shadow:0 0 22px #e5483c88;animation:pulse .7s infinite alternate}
 @keyframes pulse{to{box-shadow:0 0 6px #e5483c44}}
 .label{font-size:10px;font-weight:800;letter-spacing:.12em;text-align:center;color:var(--orange);line-height:1.3}
-.dial{flex:1 1 0;min-height:50px;width:100%;margin:2px auto 0}
+.dial{height:100%;aspect-ratio:216/219;flex:none;max-width:68%}
+.gtext{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px}
 .dial svg{width:100%;height:100%;display:block}
-.angle{font-size:clamp(26px,4.4svh,38px);line-height:1;font-weight:800;text-align:center;font-variant-numeric:tabular-nums}
+.angle{font-size:clamp(34px,6.5svh,56px);line-height:1;font-weight:800;text-align:center;font-variant-numeric:tabular-nums}
 .angle small{font-size:.45em;color:var(--orange);margin-left:2px}
 .gauge.warn .angle{color:var(--amber)}
 .gauge.danger .angle{color:var(--red)}
-.tag{font-size:12px;font-weight:700;text-align:center;margin-top:4px;color:#cfd7de;min-height:16px;white-space:nowrap}
+.tag{font-size:13px;font-weight:700;text-align:center;color:#cfd7de;min-height:16px;white-space:nowrap}
 .sub{font-size:9.5px;color:var(--muted);text-align:center;margin-top:2px;letter-spacing:.08em;white-space:nowrap}
-.side{grid-area:side;display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);grid-template-areas:"alt speed maxg" "acc speed maxa";gap:6px 8px}
+.side{grid-area:side;display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);grid-template-areas:"alt speed maxg" "acc speed maxa";gap:4px 8px;align-items:center}
 .s-alt{grid-area:alt}.s-maxg{grid-area:maxg}.s-acc{grid-area:acc}.s-maxa{grid-area:maxa}
-.stat{border:1px solid #303946;background:#121820;border-radius:12px;text-align:center;padding:5px 4px;width:100%;color:inherit;display:flex;flex-direction:column;justify-content:center;min-width:0}
-.stat .k{font-size:9.5px;color:var(--muted);letter-spacing:.08em;white-space:nowrap}
-.stat .v{font-size:19px;font-weight:800;color:var(--orange);margin-top:2px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.stat{border:1px solid #303946;background:#121820;border-radius:9px;padding:3px 8px;width:100%;color:inherit;display:flex;justify-content:space-between;align-items:baseline;gap:4px;min-width:0}
+.stat .k{font-size:8.5px;color:var(--muted);letter-spacing:.04em;white-space:nowrap}
+.stat .v{font-size:15px;font-weight:800;color:var(--orange);font-variant-numeric:tabular-nums;white-space:nowrap}
 .stat.plain .v{color:#fff}
-.speed{grid-area:speed;width:clamp(92px,12.5svh,116px);aspect-ratio:1;align-self:center;border-radius:50%;border:2px solid var(--orange);background:radial-gradient(circle,#202833,#0c1015 72%);display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 0 18px #e8892517,inset 0 0 15px #e8892510}
-.speed .k{font-size:8px;color:var(--muted);letter-spacing:.06em}
-.speed .v{font-size:clamp(30px,4.8svh,40px);font-weight:850;line-height:1.05;font-variant-numeric:tabular-nums}
-.speed small{font-size:11px;color:var(--orange)}
-.gmeter{grid-area:gmeter;display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);grid-template-rows:auto minmax(0,1fr);gap:4px 12px;border:1px solid #303a46;border-radius:18px;background:linear-gradient(145deg,rgba(27,34,43,.97),rgba(10,13,18,.98));padding:8px 12px 10px 8px;min-height:0}
+.speed{grid-area:speed;width:clamp(56px,8svh,66px);aspect-ratio:1;align-self:center;border-radius:50%;border:2px solid var(--orange);background:radial-gradient(circle,#202833,#0c1015 72%);display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 0 18px #e8892517,inset 0 0 15px #e8892510}
+.speed .k{display:none}
+.speed .v{font-size:clamp(22px,3.2svh,26px);font-weight:850;line-height:1.05;font-variant-numeric:tabular-nums}
+.speed small{font-size:9px;color:var(--orange)}
+.gmeter{grid-area:gmeter;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);grid-template-rows:auto minmax(0,1fr);gap:2px 12px;border:1px solid #303a46;border-radius:18px;background:linear-gradient(145deg,rgba(27,34,43,.97),rgba(10,13,18,.98));padding:5px 12px 6px 8px;min-height:0}
 .gmeter .label{grid-column:1/3}
 .gdial{min-height:0;height:100%;width:100%}
 .gdial svg{width:100%;height:100%;display:block}
@@ -79,6 +81,10 @@ button{font:inherit;color:inherit;cursor:pointer}
 .demo label{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin:4px 0 0}
 .demo label b{color:var(--orange)}
 input[type=range]{width:100%;accent-color:var(--orange)}
+.a2hs{position:fixed;left:10px;right:10px;bottom:calc(8px + env(safe-area-inset-bottom));z-index:15;display:none;align-items:center;gap:10px;background:#1c2530f2;border:1px solid #e8892588;border-radius:12px;padding:8px 8px 8px 12px;font-size:12px;line-height:1.45;color:#e6ebf0;box-shadow:0 6px 24px #000a}
+.a2hs.show{display:flex}
+.a2hs b{color:var(--orange)}
+.a2hs button{flex:none;width:30px;height:30px;border-radius:50%;border:1px solid #3a4552;background:#141a22;font-size:15px}
 .note{font-size:11px;color:#8693a1;line-height:1.5;margin-top:4px}
 .toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom));transform:translate(-50%,20px);background:#1c2530;border:1px solid #3a4756;color:#fff;font-size:14px;padding:12px 16px;border-radius:14px;max-width:90vw;opacity:0;pointer-events:none;transition:.25s;z-index:20;text-align:center}
 .toast.show{opacity:1;transform:translate(-50%,0)}
@@ -103,9 +109,9 @@ input[type=range]{width:100%;accent-color:var(--orange)}
 .ver{text-align:center;font-size:10px;color:#5d6a77;margin-top:14px}
 .flash{position:fixed;inset:0;pointer-events:none;box-shadow:inset 0 0 0 0 #e5483c;z-index:5;transition:box-shadow .15s}
 .flash.on{box-shadow:inset 0 0 40px 10px #e5483ccc}
-@media(max-height:760px){.sub{display:none}}
+@media(max-height:640px){.sub{display:none}}
 /* 高さが足りないとき: Gの数字を1行(項目名 + 値)にまとめる */
-@media(orientation:portrait) and (max-height:640px){.gread{gap:4px}.gread .gr{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;column-gap:6px;padding:3px 8px}.gread .gk{gap:5px}.gread .gv{font-size:16px}}
+@media(orientation:portrait){.gread{gap:4px}.gread .gr{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;column-gap:6px;padding:3px 8px}.gread .gk{gap:5px}.gread .gv{font-size:16px}}
 @media(max-width:360px){.brand{display:none}.btn{padding:0 9px}}
 /* 横画面(車載ホルダー想定): 左から ピッチ / ロール / Gメーター / 速度・数値 */
 @media(orientation:landscape) and (max-height:560px){
@@ -115,7 +121,15 @@ input[type=range]{width:100%;accent-color:var(--orange)}
   #pitchCard{grid-area:pitch}
   #rollCard{grid-area:roll}
   .sub{display:none}
+  .gauge{flex-direction:column;padding:6px}
+  .dial{height:auto;width:100%;max-width:none;flex:1 1 0;min-height:0;aspect-ratio:auto}
+  .gtext{display:contents}
+  .gauge .label{order:-1}
   .angle{font-size:clamp(24px,8svh,34px)}
+  .side .stat{padding:5px 8px}
+  .speed{width:min(100%,clamp(80px,26svh,108px))}
+  .speed .k{display:block;font-size:8px;color:var(--muted)}
+  .speed .v{font-size:34px}
   .gmeter{grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(0,1fr) auto;padding:8px 10px}
   .gmeter .label{grid-column:1}
   .gread{gap:3px}
@@ -124,7 +138,7 @@ input[type=range]{width:100%;accent-color:var(--orange)}
   .gread .gk em{display:none}
   .gread .gv{font-size:14px}
   .side{grid-template-columns:minmax(0,1fr);grid-template-rows:auto;grid-template-areas:"speed" "alt" "maxg" "acc" "maxa";align-content:space-between;gap:5px}
-  .speed{width:min(100%,clamp(80px,26svh,108px));justify-self:center}
+  .speed{justify-self:center}
   .stat{flex-direction:row;justify-content:space-between;align-items:baseline;padding:5px 8px;gap:4px}
   .stat .k{font-size:8px;letter-spacing:.03em}
   .stat .v{font-size:15px;margin:0}
@@ -156,8 +170,8 @@ input[type=range]{width:100%;accent-color:var(--orange)}
     <div class="location" id="location">GPS 停止中 · 計測開始で測位します</div>
   </div>
   <section class="gauges">
-    <article class="gauge" id="pitchCard"><div class="label">PITCH / UPHILL · DOWNHILL</div><div class="dial"><svg id="pitchSvg" viewBox="0 0 240 230" role="img" aria-label="ピッチ角メーター"></svg></div><div class="angle" id="pitchVal">0.0<small>°</small></div><div class="tag" id="pitchTag">水平</div><div class="sub">SIDE VIEW · FRONT ↔ REAR</div></article>
-    <article class="gauge" id="rollCard"><div class="label">ROLL / LEFT · RIGHT</div><div class="dial"><svg id="rollSvg" viewBox="0 0 240 230" role="img" aria-label="ロール角メーター"></svg></div><div class="angle" id="rollVal">0.0<small>°</small></div><div class="tag" id="rollTag">水平</div><div class="sub">FRONT VIEW · SIDE ↔ SIDE</div></article>
+    <article class="gauge" id="pitchCard"><div class="dial"><svg id="pitchSvg" viewBox="12 1 216 219" role="img" aria-label="ピッチ角メーター"></svg></div><div class="gtext"><div class="label">PITCH / UPHILL · DOWNHILL</div><div class="angle" id="pitchVal">0.0<small>°</small></div><div class="tag" id="pitchTag">水平</div><div class="sub">SIDE VIEW · FRONT ↔ REAR</div></div></article>
+    <article class="gauge" id="rollCard"><div class="dial"><svg id="rollSvg" viewBox="12 1 216 219" role="img" aria-label="ロール角メーター"></svg></div><div class="gtext"><div class="label">ROLL / LEFT · RIGHT</div><div class="angle" id="rollVal">0.0<small>°</small></div><div class="tag" id="rollTag">水平</div><div class="sub">FRONT VIEW · SIDE ↔ SIDE</div></div></article>
   </section>
   <section class="side">
     <div class="speed"><div class="k">VEHICLE SPEED</div><div class="v" id="speed">--</div><small id="speedUnit">km/h</small></div>
@@ -180,6 +194,7 @@ input[type=range]{width:100%;accent-color:var(--orange)}
     <label><span>デモ操作 / ROLL(+で右下がり)</span><b id="demoRLabel">0°</b></label><input id="demoR" type="range" min="-45" max="45" value="0" step="1">
   </section>
 </main>
+<div class="a2hs" id="a2hs"><div>共有ボタン <b>□↑</b> →「<b>ホーム画面に追加</b>」で、アドレス欄のない<b>全画面</b>で使えます</div><button id="a2hsClose" aria-label="案内を閉じる">✕</button></div>
 <div class="toast" id="toast"></div>
 <div class="modal" id="modal"><div class="sheet">
   <h2>設定</h2>
@@ -204,7 +219,7 @@ input[type=range]{width:100%;accent-color:var(--orange)}
   <button class="ghost" id="clearCal">校正データを消去</button>
   <div class="actions2"><button id="close">閉じる</button><button class="primary" id="calibrate">いまの姿勢をゼロに設定</button></div>
   <p class="note">停車中に設置し、水平な場所で「ゼロ設定」を押してください。走行中は画面を操作しないでください。</p>
-  <div class="ver">CLINOMETER PRO v2.3</div>
+  <div class="ver">CLINOMETER PRO v2.4</div>
 </div></div>
 <script>
 /* ===== Land Cruiser シリーズ車体データ(実寸 mm)と SVG ジェネレータ =====
@@ -882,6 +897,11 @@ $('zeroBtn').onclick = calibrate;
 $('sensorBtn').onclick = async () => { if (active) stopSensors(); else await startSensors(); };
 $('maxGBtn').onclick = () => { maxG = 0; toast('最大Gをリセットしました'); };
 $('maxAngleBtn').onclick = () => { maxAngle = 0; lastKey = ''; toast('最大角をリセットしました'); };
+
+/* ---------- ホーム画面に追加の案内(iPhoneのSafariで開いたときだけ) ---------- */
+const isStandalone = navigator.standalone === true || matchMedia('(display-mode: standalone)').matches;
+if (IS_IOS && !isStandalone && !store.get('lc.a2hsHidden', false)) $('a2hs').classList.add('show');
+$('a2hsClose').onclick = () => { $('a2hs').classList.remove('show'); store.set('lc.a2hsHidden', true); };
 
 /* ---------- 起動 ---------- */
 applySettingsToUI(); applyModel(); makeGMeter(); updateButtons();
